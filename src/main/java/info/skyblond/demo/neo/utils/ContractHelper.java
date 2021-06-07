@@ -10,6 +10,7 @@ import io.neow3j.protocol.core.response.ContractManifest;
 import io.neow3j.transaction.Signer;
 import io.neow3j.types.ContractParameter;
 import io.neow3j.types.Hash160;
+import io.neow3j.utils.Await;
 import io.neow3j.wallet.Account;
 import io.neow3j.wallet.Wallet;
 import org.slf4j.Logger;
@@ -42,7 +43,7 @@ public class ContractHelper {
             throw new Exception(String.format("Deployment was not successful. Error message from neo-node was: "
                     + "'%s'\n", response.getError().getMessage()));
         }
-        tx.track().blockingSubscribe();
+        Await.waitUntilTransactionIsExecuted(tx.getTxId(), Constants.NEOW3J);
         var contractHash = getContractHash(account, res.getNefFile(), res.getManifest());
         logger.info("Script hash of the deployed contract: " + contractHash);
         logger.info("Contract Address: " + contractHash.toAddress());
