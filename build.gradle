@@ -29,17 +29,3 @@ test {
 
 sourceCompatibility = 11
 targetCompatibility = 11
-
-task startNeoNode {
-    group "neoxp"
-    exec {
-        commandLine "neoxp", "run", "-s", "5"
-    }
-}
-
-task resetNeoNode {
-    group "neoxp"
-    exec {
-        commandLine "neoxp", "reset", "-f"
-    }
-}
