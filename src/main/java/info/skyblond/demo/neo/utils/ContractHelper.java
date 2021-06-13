@@ -51,7 +51,7 @@ public class ContractHelper {
     }
 
     public static Hash160 getContractHash(Account account, NefFile nefFile, ContractManifest manifest) {
-        return SmartContract.getContractHash(account.getScriptHash(), nefFile.getCheckSumAsInteger(), manifest.getName());
+        return SmartContract.calcContractHash(account.getScriptHash(), nefFile.getCheckSumAsInteger(), manifest.getName());
     }
 
     public static void destroyContract(
