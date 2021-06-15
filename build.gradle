@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'io.neow3j.gradle-plugin' version '3.11.1'
+    id 'io.neow3j.gradle-plugin' version '3.11.2'
 }
 
 group 'info.skyblond.demo.meo'
@@ -17,8 +17,8 @@ repositories {
 
 dependencies {
     implementation 'ch.qos.logback:logback-classic:1.2.3'
-    implementation 'io.neow3j:devpack:3.11.1'
-    implementation 'io.neow3j:compiler:3.11.1'
+    implementation 'io.neow3j:devpack:3.11.2'
+    implementation 'io.neow3j:compiler:3.11.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 }
