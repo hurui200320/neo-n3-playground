@@ -7,7 +7,10 @@ import io.neow3j.contract.ContractManagement;
 import io.neow3j.contract.NefFile;
 import io.neow3j.contract.SmartContract;
 import io.neow3j.protocol.core.response.ContractManifest;
+import io.neow3j.protocol.core.response.NeoSendRawTransaction;
+import io.neow3j.transaction.AccountSigner;
 import io.neow3j.transaction.Signer;
+import io.neow3j.transaction.Transaction;
 import io.neow3j.types.ContractParameter;
 import io.neow3j.types.Hash160;
 import io.neow3j.utils.Await;
@@ -33,18 +36,18 @@ public class ContractHelper {
             Wallet wallet
     ) throws Throwable {
         logger.info("Deploying contract...");
-        var tx = new ContractManagement(Constants.NEOW3J)
+        Transaction tx = new ContractManagement(Constants.NEOW3J)
                 .deploy(res.getNefFile(), res.getManifest())
-                .signers(Signer.global(account.getScriptHash()))
+                .signers(AccountSigner.global(account.getScriptHash()))
                 .wallet(wallet)
                 .sign();
-        var response = tx.send();
+        NeoSendRawTransaction response = tx.send();
         if (response.hasError()) {
             throw new Exception(String.format("Deployment was not successful. Error message from neo-node was: "
                     + "'%s'\n", response.getError().getMessage()));
         }
         Await.waitUntilTransactionIsExecuted(tx.getTxId(), Constants.NEOW3J);
-        var contractHash = getContractHash(account, res.getNefFile(), res.getManifest());
+        Hash160 contractHash = getContractHash(account, res.getNefFile(), res.getManifest());
         logger.info("Script hash of the deployed contract: " + contractHash);
         logger.info("Contract Address: " + contractHash.toAddress());
         return contractHash;
@@ -63,7 +66,7 @@ public class ContractHelper {
         try {
             InvokeHelper.invokeFunction(
                     contract, "destroy",
-                    new ContractParameter[0], new Signer[]{Signer.calledByEntry(account.getScriptHash())},
+                    new ContractParameter[0], new Signer[]{AccountSigner.calledByEntry(account.getScriptHash())},
                     wallet
             );
         } catch (Throwable throwable) {

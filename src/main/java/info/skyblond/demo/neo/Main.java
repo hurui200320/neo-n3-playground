@@ -4,6 +4,8 @@ import info.skyblond.demo.neo.contract.TestContract;
 import info.skyblond.demo.neo.env.Constants;
 import info.skyblond.demo.neo.env.DefaultAccount;
 import info.skyblond.demo.neo.utils.ContractHelper;
+import info.skyblond.demo.neo.utils.Pair;
+import io.neow3j.compiler.CompilationUnit;
 import io.neow3j.contract.SmartContract;
 import io.neow3j.types.Hash160;
 import io.neow3j.wallet.Account;
@@ -26,7 +28,7 @@ public class Main {
         boolean isError = false;
         try {
             // init
-            var contractRes = ContractHelper.compileContract(TEST_CONTRACT_CLASS);
+            CompilationUnit contractRes = ContractHelper.compileContract(TEST_CONTRACT_CLASS);
             Hash160 contractHash = ContractHelper.deployContract(contractRes, DEPLOY_ACCOUNT, DEPLOY_SIGN_WALLET);
             contract = new SmartContract(contractHash, Constants.NEOW3J);
             logger.info("Start executing user's code");

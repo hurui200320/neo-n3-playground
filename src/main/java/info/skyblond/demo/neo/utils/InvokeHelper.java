@@ -22,15 +22,15 @@ public class InvokeHelper {
             ContractParameter[] parameters, Signer[] signers,
             Wallet wallet
     ) throws Throwable {
-        var tx = contract
+        Transaction tx = contract
                 .invokeFunction(function, parameters)
                 .signers(signers).wallet(wallet).sign();
-        var response = tx.send();
+        NeoSendRawTransaction response = tx.send();
         return new Pair<>(tx, response);
     }
 
     public static NeoApplicationLog invokeFunction(SmartContract contract, String function, ContractParameter[] parameters, Signer[] signers, Wallet wallet) throws Throwable {
-        var txAndResp = buildTxAndSend(contract, function, parameters, signers, wallet);
+        Pair<Transaction, NeoSendRawTransaction> txAndResp = buildTxAndSend(contract, function, parameters, signers, wallet);
         if (txAndResp.getSecond().hasError()) {
             throw new Exception(String.format("Error when invoking %s: %s", function, txAndResp.getSecond().getError().getMessage()));
         }
