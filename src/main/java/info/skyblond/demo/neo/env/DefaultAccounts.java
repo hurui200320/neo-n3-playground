@@ -7,14 +7,14 @@ import io.neow3j.wallet.Wallet;
 import java.math.BigInteger;
 import java.util.Collections;
 
-public class DefaultAccount {
-    public static final Account GENESIS_DEFAULT_ACCOUNT = new Account(
+public class DefaultAccounts {
+    public static final Account NODE_ACCOUNT = new Account(
             ECKeyPair.create(new BigInteger("c42675cc4c8d1c3a319d2c972690654390153a21717674e6ebe46c2c62e5cd48", 16))
     );
 
-    public static final Account GENESIS_MULTI_SIG_ACCOUNT = Account.createMultiSigAccount(Collections.singletonList(GENESIS_DEFAULT_ACCOUNT.getECKeyPair().getPublicKey()), 1);
+    public static final Account GENESIS_MULTI_SIG_ACCOUNT = Account.createMultiSigAccount(Collections.singletonList(NODE_ACCOUNT.getECKeyPair().getPublicKey()), 1);
 
-    public static final Wallet GENESIS_WALLET = Wallet.withAccounts(GENESIS_DEFAULT_ACCOUNT, GENESIS_MULTI_SIG_ACCOUNT);
+    public static final Wallet GENESIS_WALLET = Wallet.withAccounts(NODE_ACCOUNT, GENESIS_MULTI_SIG_ACCOUNT);
 
 
     public static final Account ALICE_ACCOUNT = new Account(

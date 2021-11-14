@@ -16,7 +16,7 @@ changed to explain the code.
 
 This repo makes use of [`neo-express`](https://github.com/neo-project/neo-express) to manage private chain. Beside
 default genesis account, there are also test account `alice`, `bob` and `user`, all of those are defined
-in `info.skyblond.demo.neo.env.DefaultAccount` class. Those 4 accounts (including genesis account) should be enough for
+in `info.skyblond.demo.neo.env.DefaultAccounts` class. Those 4 accounts (including genesis account) should be enough for
 demonstration.
 
 Note: You may need `dotnet tool install Neo.Express -g --version 2.0.32-preview+f8a192f373` to install RC2 version. The
