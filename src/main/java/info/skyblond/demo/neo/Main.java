@@ -11,6 +11,7 @@ import io.neow3j.compiler.CompilationUnit;
 import io.neow3j.contract.SmartContract;
 import io.neow3j.transaction.AccountSigner;
 import io.neow3j.transaction.Transaction;
+import io.neow3j.types.ContractParameter;
 import io.neow3j.types.Hash160;
 import io.neow3j.wallet.Account;
 import org.slf4j.Logger;
@@ -45,6 +46,7 @@ public class Main {
     private static void run() throws Throwable {
         // Compile contract, OWNER is a multi-sig account
         CompilationUnit contractRes = ContractHelper.compileContract(TEST_CONTRACT_CLASS, CONTRACT_OWNER.getAddress());
+        contractRes.getManifest().getAbi().getMethods().forEach(method -> System.out.println(method.getName()));
         // Deploy contract with Node
         Hash160 contractHash = ContractHelper.deployContract(contractRes, CONTRACT_OWNER, MULTI_SIG_MAP);
         contract = new SmartContract(contractHash, Constants.NEOW3J);
@@ -69,7 +71,7 @@ public class Main {
         logger.info("Member is owner: {}", result);
     }
 
-    public static void main(String[] args) throws Throwable {
+    public static void main(String[] args) {
         try {
             CommonUtils.prepareAccounts(MULTI_SIG_MAP, CONTRACT_OWNER, DefaultAccounts.ALICE_ACCOUNT,
                     DefaultAccounts.BOB_ACCOUNT, DefaultAccounts.USER_ACCOUNT);
@@ -77,9 +79,14 @@ public class Main {
         } catch (Throwable t) {
             logger.error("Error!", t);
         } finally {
-            Transaction tx = InvokeHelper.sign(contract.invokeFunction("destroy")
-                    .signers(AccountSigner.calledByEntry(DefaultAccounts.ALICE_ACCOUNT)), MULTI_SIG_MAP);
-            InvokeHelper.executeTx(tx, true);
+            try {
+                Transaction tx = InvokeHelper.sign(contract.invokeFunction("_deploy",
+                                ContractParameter.string("asd"), ContractParameter.bool(true))
+                        .signers(AccountSigner.calledByEntry(DefaultAccounts.ALICE_ACCOUNT)), MULTI_SIG_MAP);
+                InvokeHelper.executeTx(tx, true);
+            } catch (Throwable t) {
+                logger.error("Error!", t);
+            }
         }
     }
 }

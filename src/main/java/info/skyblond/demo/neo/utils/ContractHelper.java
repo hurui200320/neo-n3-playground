@@ -10,6 +10,7 @@ import io.neow3j.protocol.core.response.ContractManifest;
 import io.neow3j.protocol.core.response.NeoSendRawTransaction;
 import io.neow3j.transaction.AccountSigner;
 import io.neow3j.transaction.Transaction;
+import io.neow3j.transaction.exceptions.TransactionConfigurationException;
 import io.neow3j.types.Hash160;
 import io.neow3j.utils.Await;
 import io.neow3j.wallet.Account;
@@ -41,16 +42,22 @@ public class ContractHelper {
             Map<Account, List<Account>> multiSigMap
     ) throws Throwable {
         logger.info("Deploying contract...");
-        Transaction tx;
-        tx = InvokeHelper.sign(new ContractManagement(Constants.NEOW3J)
-                .deploy(res.getNefFile(), res.getManifest())
-                .signers(AccountSigner.global(deployAccount)), multiSigMap);
-        NeoSendRawTransaction response = tx.send();
-        if (response.hasError()) {
-            throw new Exception(String.format("Deployment was not successful. Error message from neo-node was: "
-                    + "'%s'\n", response.getError().getMessage()));
+        try {
+            Transaction tx = InvokeHelper.sign(new ContractManagement(Constants.NEOW3J)
+                    .deploy(res.getNefFile(), res.getManifest())
+                    .signers(AccountSigner.global(deployAccount)), multiSigMap);
+            NeoSendRawTransaction response = tx.send();
+            if (response.hasError()) {
+                throw new Exception(String.format("Deployment was not successful. Error message from neo-node was: "
+                        + "'%s'\n", response.getError().getMessage()));
+            }
+            Await.waitUntilTransactionIsExecuted(tx.getTxId(), Constants.NEOW3J);
+        } catch (TransactionConfigurationException e) {
+            if (!e.getMessage().contains("Contract Already Exists")) {
+                throw new RuntimeException(e);
+            }
         }
-        Await.waitUntilTransactionIsExecuted(tx.getTxId(), Constants.NEOW3J);
+
         Hash160 contractHash = getContractHash(deployAccount, res.getNefFile(), res.getManifest());
         logger.info("Script hash of the deployed contract: " + contractHash);
         logger.info("Contract Address: " + contractHash.toAddress());
